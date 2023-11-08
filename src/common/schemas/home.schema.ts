@@ -28,6 +28,7 @@ export class Home {
         consultingNumber: String,
         client: String,
         dni: String,
+        week: String,
         consultingDate: String,
         consultingHour: String,
         reason: String,

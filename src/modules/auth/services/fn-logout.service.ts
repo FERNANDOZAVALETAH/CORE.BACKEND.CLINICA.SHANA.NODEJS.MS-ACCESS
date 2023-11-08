@@ -38,7 +38,7 @@ export class FnLogoutService {
     await this.deleteTokenInSecurity(security._id, tokenDecrypt);
 
     return <ResponseGenericDto>{
-      message: 'Processo exitoso',
+      message: 'PE: Proceso exitoso',
       operation: `::${FnLogoutService.name}::execute`,
       data: <ResponseLogoutDto>{
         coment: '',

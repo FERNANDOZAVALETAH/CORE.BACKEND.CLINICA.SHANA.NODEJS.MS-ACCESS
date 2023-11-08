@@ -8,4 +8,5 @@ export interface IRegisterConsulting {
   client: string;
   reason: string;
   status: number;
+  currentWeek?: string;
 }

@@ -3,7 +3,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Home, HomeSchema } from 'src/common/schemas';
 import { HomeController } from './home.http.controller';
 import { HomeTcpController } from './home.tcp.controller';
-import { FnHomeService, FnRegisterConsultingService } from './services';
+import {
+  FnHomeService,
+  FnRegisterConsultingService,
+  FnRegisterSessionService,
+} from './services';
 import { CryptoModule } from 'src/common/crypto/crypto.module';
 
 @Module({
@@ -17,6 +21,10 @@ import { CryptoModule } from 'src/common/crypto/crypto.module';
     CryptoModule,
   ],
   controllers: [HomeController, HomeTcpController],
-  providers: [FnHomeService, FnRegisterConsultingService],
+  providers: [
+    FnRegisterSessionService,
+    FnHomeService,
+    FnRegisterConsultingService,
+  ],
 })
 export class HomeModule {}

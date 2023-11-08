@@ -67,7 +67,7 @@ export class FnLoginService {
     this.registerLogAccess(icreateLogAccess);
 
     return <ResponseGenericDto>{
-      message: 'Processo exitoso',
+      message: 'PE: Proceso exitoso',
       operation: `::${FnLoginService.name}::execute`,
       data: <ResponseLoginDto>{
         token: generateTokenForUser.tokenEncrypt,

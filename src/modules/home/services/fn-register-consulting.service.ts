@@ -4,6 +4,7 @@ import * as mongoose from 'mongoose';
 import { IRegisterConsulting } from '../interfaces';
 import { RegisterHomeConsultingInternalException } from 'src/exception';
 import { Home, HomeDocument } from 'src/common/schemas';
+import { getISOWeek, getISOWeekYear, parse } from 'date-fns';
 
 @Injectable()
 export class FnRegisterConsultingService {
@@ -21,6 +22,7 @@ export class FnRegisterConsultingService {
         idUser: mongoose.Types.ObjectId(payload.idUser),
       });
       this.logger.debug(`::execute::existHomeForUser::${!existHomeForUser}`);
+      payload.currentWeek = this.getCurrentWeek(payload.consultingDate);
       if (!existHomeForUser) {
         await this.create(payload);
       } else {
@@ -51,6 +53,7 @@ export class FnRegisterConsultingService {
           client: payload.client,
           reason: payload.reason,
           status: payload.status,
+          week: payload.currentWeek,
         },
       ],
     });
@@ -74,9 +77,23 @@ export class FnRegisterConsultingService {
             client: payload.client,
             reason: payload.reason,
             status: payload.status,
+            week: payload.currentWeek,
           },
         },
       },
     );
+  }
+
+  private getCurrentWeek(consultingDate: string) {
+    this.logger.debug(`::getCurrentWeek::consultingDate::${consultingDate}`);
+    const now = parse(consultingDate, 'dd/MM/yyyy', new Date());
+    const currentWeekNumber = getISOWeek(now);
+    const currentYear = getISOWeekYear(now);
+    this.logger.debug(
+      `::getCurrentWeek::currentWeekNumber::${currentWeekNumber}::currentYear::${currentYear}`,
+    );
+    const formattedWeek = `${currentYear}${currentWeekNumber}`;
+    this.logger.debug(`::getCurrentWeek::formattedWeek::${formattedWeek}`);
+    return formattedWeek;
   }
 }

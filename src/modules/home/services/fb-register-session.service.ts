@@ -15,7 +15,7 @@ export class FnRegisterSessionService {
   ) {}
 
   async execute(payload: IRegisterSession[]) {
-    this.logger.debug(`::execute::parameters::${JSON.stringify(payload)}`);
+    this.logger.debug(`::execute::parameters::${JSON.stringify(payload[0])}`);
     try {
       const homeForUser = await this.homeModel.findOne({
         idUser: mongoose.Types.ObjectId(payload[0].idUser),
@@ -31,10 +31,15 @@ export class FnRegisterSessionService {
     idHome: mongoose.Types.ObjectId,
     iregisterSessions: IRegisterSession[],
   ): Promise<void> {
+    this.logger.debug(
+      `::execute::parameters::idhome::${idHome}::iregisterSessions::${JSON.stringify(
+        iregisterSessions[0],
+      )}`,
+    );
     await this.homeModel.findOneAndUpdate(
       { _id: idHome },
       {
-        $addToSet: { currentWeekSession: { $aech: iregisterSessions } },
+        $addToSet: { currentWeekSession: { $each: iregisterSessions } },
       },
     );
   }

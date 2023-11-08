@@ -2,6 +2,16 @@ export const GENERAL = {
   NAME_COMPONENT: '::microservice-access::',
   MESSAGE_SUCCEFULL: 'Proceso exitoso',
   STATUS_CREATED: 'Creado',
+  CONSULTING: {
+    STATUS: {
+      PENDING: 1,
+    },
+  },
+  SESSION: {
+    STATUS: {
+      PENDING: 1,
+    },
+  },
   EXCEPTION_CODE: {
     GENERATE_TOKEN: '[ER-GTHS]',
     REGISTER_SECURITY: '[ER-RSFU]',
