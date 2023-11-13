@@ -1,27 +1,21 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import { FnFindUserService, FnGetSecurityService } from './services';
-import {
-  IFindUser,
-  IUser,
-  IValidExistPermision,
-  IValidateExistToken,
-} from './interfaces';
-import { FnGetPermisionsService } from './services/fn-get-permisions.service';
+import * as services from './services';
+import * as interfaces from './interfaces';
 
 @Controller()
 export class SecurityTcpController {
   constructor(
-    private readonly fnGetSecurityService: FnGetSecurityService,
-    private readonly fnGetPermisionSecurity: FnGetPermisionsService,
-    private readonly fnFindUserService: FnFindUserService,
+    private readonly fnGetSecurityService: services.FnGetSecurityService,
+    private readonly fnGetPermisionSecurity: services.FnGetPermisionsService,
+    private readonly fnFindUserService: services.FnFindUserService,
   ) {}
 
   @MessagePattern({
     subjet: 'client-security',
     function: 'validate-exist-token',
   })
-  validateToken(payload: IValidateExistToken): Promise<boolean> {
+  validateToken(payload: interfaces.IValidateExistToken): Promise<boolean> {
     return this.fnGetSecurityService.execute(payload);
   }
 
@@ -29,12 +23,14 @@ export class SecurityTcpController {
     subjet: 'client-security',
     function: 'validate-exist-permision',
   })
-  validatePermision(payload: IValidExistPermision): Promise<boolean> {
+  validatePermision(
+    payload: interfaces.IValidExistPermision,
+  ): Promise<boolean> {
     return this.fnGetPermisionSecurity.execute(payload);
   }
 
   @MessagePattern({ subjet: 'client-security', function: 'find-user' })
-  findUser(payload: IFindUser): Promise<IUser> {
+  findUser(payload: interfaces.IFindUser): Promise<interfaces.IUser> {
     return this.fnFindUserService.execute(payload);
   }
 }

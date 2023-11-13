@@ -10,7 +10,6 @@ import { SecurityModule } from './modules/security/security.module';
 import { LogModule } from './common/client/log/logs.module';
 import { AccessModule } from './common/client/access/access.module';
 import { HomeModule } from './modules/home/home.module';
-import { CryptoModule } from './common/crypto/crypto.module';
 
 @Module({
   imports: [

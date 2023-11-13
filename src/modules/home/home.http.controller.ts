@@ -6,46 +6,43 @@ import {
   ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
-import { ResponseGenericDto } from 'src/common/dto';
-import {
-  GenerateTokenInternalException,
-  InvalidCredentialsCustomException,
-} from 'src/exception';
-import { FnHomeService } from './services';
-import { RequiredPermisions, UserDecorator } from 'src/common/decorator';
-import { IUserSession } from 'src/common/interfaces';
-import { PermisionGuard } from 'src/common/guards/permision.guard';
-import { AccessGuard } from 'src/common/guards/access.guard';
-import { Permision } from 'src/common/enums';
+
+import * as services from 'src/modules/home/services';
+import * as exceptions from 'src/exception';
+import * as request from 'src/common/dto';
+import * as decorators from 'src/common/decorator';
+import * as guards from 'src/common/guards';
+import * as permissions from 'src/common/enums';
+import * as interfaces from 'src/common/interfaces';
 
 @ApiBearerAuth()
-@UseGuards(AccessGuard, PermisionGuard)
+@UseGuards(guards.AccessGuard, guards.PermisionGuard)
 @Controller('home/v1.0')
 export class HomeController {
-  constructor(private readonly fnHomeService: FnHomeService) {}
+  constructor(private readonly fnHomeService: services.FnHomeService) {}
 
   @ApiCreatedResponse({
     description: 'Get home has been successfully created authentication.',
-    type: ResponseGenericDto,
+    type: request.ResponseGenericDto,
   })
   @ApiConflictResponse({
     description: 'Get home has been failed by conflict authentication',
   })
   @ApiInternalServerErrorResponse({
     description: 'Internal Server Exception.',
-    type: GenerateTokenInternalException,
+    type: exceptions.GenerateTokenInternalException,
   })
   @ApiConflictResponse({
     description: 'Conflict Exception',
-    type: InvalidCredentialsCustomException,
+    type: exceptions.InvalidCredentialsCustomException,
   })
   @UseGuards(ThrottlerGuard)
-  @RequiredPermisions(Permision.HOME_READ)
+  @decorators.RequiredPermisions(permissions.Permision.HOME_READ)
   @Throttle()
   @Get('/')
   getHome(
-    @UserDecorator() userSession: IUserSession,
-  ): Promise<ResponseGenericDto> {
+    @decorators.UserDecorator() userSession: interfaces.IUserSession,
+  ): Promise<request.ResponseGenericDto> {
     return this.fnHomeService.execute(userSession);
   }
 }

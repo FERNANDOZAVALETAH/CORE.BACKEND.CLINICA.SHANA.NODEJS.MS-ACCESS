@@ -1,23 +1,20 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import { IRegisterConsulting, IRegisterSession } from './interfaces';
-import {
-  FnRegisterConsultingService,
-  FnRegisterSessionService,
-} from './services';
+import * as interfaces from './interfaces';
+import * as services from './services';
 
 @Controller()
 export class HomeTcpController {
   constructor(
-    private readonly fnRegisterConsultingService: FnRegisterConsultingService,
-    private readonly fnRegisterSessionService: FnRegisterSessionService,
+    private readonly fnRegisterConsultingService: services.FnRegisterConsultingService,
+    private readonly fnRegisterSessionService: services.FnRegisterSessionService,
   ) {}
 
   @MessagePattern({
     subjet: 'client-home',
     function: 'register-consulting',
   })
-  registerConsulting(payload: IRegisterConsulting): Promise<void> {
+  registerConsulting(payload: interfaces.IRegisterConsulting): Promise<void> {
     return this.fnRegisterConsultingService.execute(payload);
   }
 
@@ -25,7 +22,7 @@ export class HomeTcpController {
     subjet: 'client-home',
     function: 'register-session',
   })
-  registerSession(payload: IRegisterSession[]): Promise<void> {
+  registerSession(payload: interfaces.IRegisterSession[]): Promise<void> {
     return this.fnRegisterSessionService.execute(payload);
   }
 }

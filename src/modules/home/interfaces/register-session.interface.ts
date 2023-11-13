@@ -1,5 +1,3 @@
-import * as mongoose from 'mongoose';
-
 export interface IRegisterSession {
   idUser: string;
   idConsulting: string;
