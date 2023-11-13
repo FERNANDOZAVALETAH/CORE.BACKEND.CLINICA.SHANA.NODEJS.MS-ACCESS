@@ -16,9 +16,21 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
-    - name: Login to Docker Hub
-      run: docker login -u ${{ secrets.DOCKER_USSERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+    - name: Extract Dependabot secrets
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        DEPENDABOT_USERNAME: ${{ secrets.DEPENDABOT_USERNAME }}
+        DEPENDABOT_PASSWORD: ${{ secrets.DEPENDABOT_PASSWORD }}
+      run: |
+        echo "DOCKER_USERNAME=$DOCKER_USERNAME" >> $GITHUB_ENV
+        echo "DOCKER_PASSWORD=$DOCKER_PASSWORD" >> $GITHUB_ENV
+        echo "DEPENDABOT_USERNAME=$DEPENDABOT_USERNAME" >> $GITHUB_ENV
+        echo "DEPENDABOT_PASSWORD=$DEPENDABOT_PASSWORD" >> $GITHUB_ENV
 
+    - name: Login to Docker Hub
+      run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+      
     - name: Build and push Docker image
       run: |
         docker buildx create --use
