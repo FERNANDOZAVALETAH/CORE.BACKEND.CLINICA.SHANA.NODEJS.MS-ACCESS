@@ -6,37 +6,28 @@ on:
       - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout Repository
       uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '14'
 
-    - name: Extract Dependabot secrets
-      env:
-        DOCKER_USSERNAME: ${{ secrets.DOCKER_USSERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        DEPENDABOT_USERNAME: ${{ secrets.DEPENDABOT_USERNAME }}
-        DEPENDABOT_PASSWORD: ${{ secrets.DEPENDABOT_PASSWORD }}
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build Docker Image
+      run: docker build --pull --rm -f "../../Dockerfile" -t microservice-access:latest "./"
+      
+    - name: Tag Docker Image
+      run: docker tag microservice-access:latest emprendercercadolima/proyecto-clinica-shana:microservice-access-latest
+      
+    - name: Push Docker Image
       run: |
-        echo "DOCKER_USSERNAME=$DOCKER_USSERNAME" >> $GITHUB_ENV
-        echo "DOCKER_PASSWORD=$DOCKER_PASSWORD" >> $GITHUB_ENV
-        echo "DEPENDABOT_USERNAME=$DEPENDABOT_USERNAME" >> $GITHUB_ENV
-        echo "DEPENDABOT_PASSWORD=$DEPENDABOT_PASSWORD" >> $GITHUB_ENV
-
-    - name: Login to Docker Hub
-      run: docker login -u $DOCKER_USSERNAME -p $DOCKER_PASSWORD
-
-    - name: Build and push Docker image
-      run: |
-        docker buildx create --use
-        docker buildx inspect --bootstrap
-        docker buildx build --platform linux/amd64,linux/arm64 -t ${{ secrets.DOCKER_USSERNAME }}/microservice-access:latest -t ${{ secrets.DOCKER_USSERNAME }}/microservice-access:latest .
-        docker push ${{ secrets.DOCKER_USSERNAME }}/microservice-access:latest
-
-    - name: Logout from Docker Hub
-      run: docker logout
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USSERNAME }}" --password-stdin
+        docker push emprendercercadolima/proyeto-clinica-shana:microservice-access-latest
